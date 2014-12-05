@@ -20,6 +20,8 @@ errorbar = data[:,2]
 #plt.figure(2)
 plt.plot(alfa,energy,'*', markersize = 10)
 
+plt.errorbar(alfa, energy/10.0, yerr=errorbar)
+
 plt.xticks(fontsize=40)
 plt.yticks(fontsize=40)
 ## labels
