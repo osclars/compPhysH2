@@ -3,9 +3,9 @@ CC = gcc
 CFLAGS = -O3
 LIBS = -lm
 
-HEADERS = functions.h 
-OBJECTS = functions.o H2_uppgift4.o
-PROGRAM = H2_uppgift4
+HEADERS = calcEKeepAlfa.h 
+OBJECTS = calcEKeepAlfa.o H2_uppgift3.o
+PROGRAM = H2_uppgift3
 
 %.o: %.c $(HEADERS)
 	$(CC) -c -o $@ $< $(CFLAGS)

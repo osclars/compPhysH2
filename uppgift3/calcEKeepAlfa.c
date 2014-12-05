@@ -43,7 +43,7 @@ double rho(double *x, double alfa)
 /* function that uses the Metropolis algorithm to
  * calculate the energy for the electronic ground state
  * of helium */
-void calcEnergy (double *returnValues, double alfa)
+void calcEKeepAlfa(double *returnValues, double alfa)
 {
   /*declaration of variables*/
   int nRuns = 1000000;
