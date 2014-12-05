@@ -3,8 +3,9 @@ CC = gcc
 CFLAGS = -O3
 LIBS = -lm
 
-OBJECTS = H2_main.o
-PROGRAM = H2
+HEADERS = functions.h 
+OBJECTS = functions.o H2_uppgift4.o
+PROGRAM = H2_uppgift4
 
 %.o: %.c $(HEADERS)
 	$(CC) -c -o $@ $< $(CFLAGS)

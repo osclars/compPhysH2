@@ -10,7 +10,7 @@ plt.rcParams['figure.figsize'] = 15, 9
 if (len(sys.argv) ==2):
     filename = str(sys.argv[1])
 else:
-    filename = 'alfaCompare.data'
+    filename = 'savedData/alfaCompare.data'
 
 data = np.loadtxt(filename)
 alfa = data[:,0]
