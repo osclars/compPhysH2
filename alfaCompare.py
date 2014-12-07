@@ -18,12 +18,22 @@ energy = data[:,1]
 errorbar = data[:,2]
 
 #plt.figure(2)
-plt.plot(alfa,energy,'*', markersize = 10)
+plt.plot(alfa,energy,'*', markersize = 20)
 
-plt.errorbar(alfa, energy/10.0, yerr=errorbar)
+#plt.errorbar(alfa, energy, yerr=errorbar)
+
+# fit data to line
+xFit = np.linspace(0,alfa[-1])
+#only use data after fitStartStep
+tmp=np.polyfit(alfa,energy,4)
+# convenient for plotting 
+p=np.poly1d(tmp)
+#check fitted line
+#plt.plot(xFit,p(xFit))
 
 plt.xticks(fontsize=40)
 plt.yticks(fontsize=40)
+
 ## labels
 plt.xlabel('Value of alpha', fontsize=50)
 plt.ylabel('Energy [a.u.]', fontsize=50)
