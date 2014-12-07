@@ -5,7 +5,8 @@
 #include <time.h>
 
 #define PI 3.141592653589
-/*function that will be integrated*/
+
+/*Function that will be integrated*/
 double getEnergy(double *x, double alfa)
 {
   double energy;
@@ -28,6 +29,7 @@ double getEnergy(double *x, double alfa)
   energy = -4.0+numerator/(r12*denom)-1.0/(r12*(1+alfa*r12)*denom)-1.0/(4.0*denom* denom)+1.0/r12;
   return energy;
 }
+
 /* Probability function*/
 double rho(double *x, double alfa)
 {
@@ -40,52 +42,55 @@ double rho(double *x, double alfa)
   return wFunc*wFunc;
 }
 
-//double stepAlpha(double alpha, int p, double eLocal)
-//{
-//double
-//}
 
-/* function that uses the Metropolis algorithm to
+/* Function that uses the Metropolis algorithm to
  * calculate the energy for the electronic ground state
- * of helium */
+ * of helium, by varying alpha to get the best approximation
+ * for the wave function. */
 void calcEChangeAlfa(double *returnValues, double alfa, double beta)
 {
   /*declaration of variables*/
-  int nRuns = 1000000;
-  int eqStep = 500;
+  int nRuns = 10000000; 
+  int eqStep = 500; // length of equilibration
   double random_value;
   double var,errorBar;
-  double s = 11.0;
-  double d = 1.0;//controlling acceptance 
+  double s = 11.0; // value of s, calculated in problem 3
+  double d = 1.0; //controlling acceptance 
   double x[6];
   double xTry[6];
   double term1,term2; //for calculating new alpha
   double q,energyTmp;
   double r12;
   double radie[2];
-  /*Save function values in file*/
-  FILE *file;
-  //FILE *genPoints;
-  file = fopen("alfas.data","w");
-  //genPoints = fopen("genPoints.data","w");
-  srand(time(NULL));
-  int n,i,j;
-  double thrownValues;//for checking deltavalue
+  double thrownValues; //for checking d-value
   double totalEnergy;
-  double sqMean;//for calculating <f(x)^2>
+  double sqMean; //for calculating <f(x)^2>
+  int n,i,j;
+
+  /* Save function values in file */
+  FILE *file;
+  file = fopen("alfas.data","w");
+
+  /* Random */
+  srand(time(NULL));
+
   
 
-
   /* reset values that use += */
-  thrownValues=0;//for checking deltavalue
+  thrownValues=0; //for checking d-value
   totalEnergy = 0.0;
-  sqMean = 0.0;//for calculating <f(x)^2>
+  sqMean = 0.0; //for calculating <f(x)^2>
   term1 = 0.0;
   term2 = 0.0;
+
+
+  /* Initialize the position of the electrons to -10 to 10 Bohr radii */
   for( i=0; i<6;i++)
   {
-    x[i] = (((double) rand() / (double) RAND_MAX) - 0.5)*2.0;
+    x[i] = (((double) rand() / (double) RAND_MAX) - 0.5)*20.0;
   }
+
+  /* Add a random displacement, -0.5 to 0.5 Bohr radii, to the coordinates of the electrons in every run and try if the change is accepted */
   for(n=0; n<nRuns;n++)
   {
     for( i=0; i<6;i++)
@@ -114,38 +119,40 @@ void calcEChangeAlfa(double *returnValues, double alfa, double beta)
         ++thrownValues;
       }
     }
+
+    /* After the initial equilibration is over the value for alpha is varied and the energy calculated. */
     if(n> eqStep)
-    { //throw away some values
-      r12 = sqrt((x[0]-x[3])*(x[0]-x[3])+(x[1]-x[4])*(x[1]-x[4])+(x[2]-x[5])*(x[2]-x[5]));
+    { 
       energyTmp=getEnergy(x,alfa);
       sqMean += energyTmp*energyTmp;
       totalEnergy+=energyTmp;
+
+      /* Changing the value of alpha. */
+      r12 = sqrt((x[0]-x[3])*(x[0]-x[3])+(x[1]-x[4])*(x[1]-x[4])+(x[2]-x[5])*(x[2]-x[5]));
       term1 += energyTmp * (-r12*r12 / (2.0* (1.0 + alfa * r12)*(1.0 + alfa * r12)));
       term2 += (-r12*r12 / (2.0* (1.0 + alfa * r12)*(1.0 + alfa * r12)));
       alfa += - (pow(n, -beta)* 2.0 * (term1 / (double) (n -eqStep) - totalEnergy / (double) (n -eqStep) * term2 / (double) (n- eqStep)));
-      fprintf(file,"%e\n",alfa);
-      radie[0]=0;
-      radie[1]=0;
 
-
-
-      for( i=0; i<3;i++)
-      {
-        radie[0]+=x[i]*x[i];
-        radie[1]+=x[i+3]*x[i+3]; 
-      }
+  /* Print to file. */      
+  fprintf(file,"%e\n",alfa);
+     
     }
   }
 
-  //TODO change so nRuns only are steps after eq
-  //printf("Thrown values: %.0f%%\n",100*thrownValues/(double)(nRuns));
+  /* Checking percentage of thrown values. */
+  printf("Thrown values: %.0f%%\n",100*thrownValues/(double)(nRuns));
+
   totalEnergy = totalEnergy / (double) (nRuns - eqStep);
+
+  /* Calculating the variance/error bars. */
   sqMean = sqMean/(double) (nRuns - eqStep);
   var = sqMean-totalEnergy*totalEnergy;
   errorBar= s * (var/(double) (nRuns - eqStep));//calculating errorbars from variance
 
-  returnValues[0]+=totalEnergy;
-  returnValues[1]+=errorBar;  
+  /* Returns the calculated energy of the system and the variance. */
+  returnValues[0]=totalEnergy;
+  returnValues[1]=errorBar;  
+
+  /* Close printing file. */
   fclose(file);
-  //fclose(genPoints);
 }
