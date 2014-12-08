@@ -6,7 +6,7 @@
 #include "calcEKeepAlfa.h"
 
 #define PI 3.141592653589
-
+// TODO plot spread of alpha - nRuns, and spread alpha constant startposition
 int main()
 {
 
